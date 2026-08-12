@@ -24,6 +24,13 @@ function hasFinePointer() {
   return !!(window.matchMedia && window.matchMedia('(pointer: fine)').matches);
 }
 
+// Below this the page scrolls rather than filling one fixed screen, so <main>
+// is as tall as its content. Parking the headline at the centre of that would
+// drop it far below the fold instead of framing it. Matches the CSS breakpoint.
+function isNarrow() {
+  return !!(window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
+}
+
 // Deliberately small — peak displacement is RADIUS * PULL / 4, about 10px.
 // The pull should register before it can be named.
 const MAGNET_RADIUS = 90;
@@ -161,7 +168,7 @@ export default function SalesLights() {
       const reduced = prefersReducedMotion();
       setRevealHeadline(!reduced);
 
-      if (reduced || viaNav) {
+      if (reduced || viaNav || isNarrow()) {
         settleHome();
         return;
       }

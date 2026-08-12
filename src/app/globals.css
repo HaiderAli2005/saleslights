@@ -948,3 +948,86 @@ html.sl-pointer-link .sl-cursor-ring > i {
 html.sl-pointer-invert .sl-cursor-dot > i { background: #eceae4; }
 html.sl-pointer-invert .sl-cursor-ring > i { border-color: rgba(236, 234, 228, .45); }
 html.sl-pointer-invert.sl-pointer-link .sl-cursor-ring > i { border-color: rgba(236, 234, 228, .8); }
+
+/* ── Responsive ────────────────────────────────────────────────────────────── */
+
+/* The desktop design is a fixed, non-scrolling viewport — every view is sized to
+   fit exactly once. That cannot hold this content on a phone, so below this
+   width the page becomes an ordinary scrolling document. Nothing above 820px is
+   touched: this is an additive layer, not a rewrite. */
+@media (max-width: 820px) {
+  html, body { height: auto; overflow-x: hidden; overflow-y: auto; }
+
+  .sl-root {
+    position: relative;
+    inset: auto;
+    min-height: 100vh;
+    /* svh excludes the mobile URL bar, so the first screen isn't short. */
+    min-height: 100svh;
+  }
+
+  /* Pinned to the viewport so the ambient field doesn't scroll away with the
+     document it is meant to sit behind. */
+  .sl-bg { position: fixed; }
+
+  .sl-main {
+    overflow: visible;
+    justify-content: flex-start;
+    padding: clamp(24px, 5vw, 40px) 24px clamp(28px, 6vw, 44px);
+  }
+
+  /* main still grows to fill the screen, so with flex-start every pixel of
+     slack piled up under the hero. Auto margins share it above and below —
+     and unlike justify-content: center, a view taller than the screen still
+     scrolls to its top instead of overflowing out of reach. */
+  .sl-main > * { margin-block: auto; }
+
+  /* Pinned rather than left to auto-fit, so the switch happens at a width I
+     chose instead of wherever the 320px minimum happens to break. */
+  .sl-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 6vw, 44px);
+  }
+
+  .sl-header { padding: 18px 24px; }
+  .sl-footer { padding: 16px 24px; }
+  .sl-logos { padding: 14px 24px 6px; }
+
+  .sl-nav { gap: 22px; }
+  .sl-nav a { font-size: 14px; }
+
+  /* 14ch is a measure chosen for 72px type; at 32px it makes a thin column. */
+  .sl-h1 { max-width: 20ch; }
+
+  /* Portrait plus caption needs ~500px side by side. */
+  .sl-portrait-row { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .sl-portrait-frame { width: min(62%, 240px); }
+  .sl-person { flex: 0 0 auto; width: 100%; }
+
+  /* Reserving the tallest service body costs half a phone screen of blank. */
+  .sl-service-body { min-height: 0; }
+}
+
+@media (max-width: 560px) {
+  .sl-header { padding: 15px 20px; }
+  .sl-footer { padding: 14px 20px; font-size: 13px; }
+  .sl-logos { padding: 12px 20px 6px; }
+  .sl-main { padding: 30px 20px 40px; }
+
+  /* Brand and four nav items have to share 375px. */
+  .sl-brand img { height: 20px; }
+  .sl-nav { gap: 15px; }
+  .sl-nav a { font-size: 13px; }
+  .sl-footer-links { gap: 14px; }
+}
+
+/* No pointer to replace, and the frame loop that drives it never starts — which
+   would otherwise strand the glow in the top-left corner at its untransformed
+   origin. */
+@media (hover: none), (pointer: coarse) {
+  .sl-cursor-dot, .sl-cursor-ring { display: none; }
+  html[data-cursor='on'],
+  html[data-cursor='on'] a,
+  html[data-cursor='on'] button { cursor: auto; }
+  .sl-bg-glow { left: 50%; top: 42%; }
+}
