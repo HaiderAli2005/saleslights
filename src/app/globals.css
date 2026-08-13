@@ -849,63 +849,39 @@ html.sl-pointer-link .sl-cursor-ring > i {
 
 /* ── Client logo strip ─────────────────────────────────────────────────────── */
 
-.sl-logos { position: relative; z-index: 1; flex: 0 0 auto; padding: 20px 46px 9px; }
+.sl-logos { position: relative; z-index: 1; flex: 0 0 auto; padding: 18px 46px 6px; overflow: hidden; }
 
-
-/* Clips the track at the same 46px inset the rest of the layout sits on, and
-   feathers both ends so logos drift in and out instead of being sliced off. */
-.sl-marquee {
-  max-width: 1500px;
-  margin: 0 auto;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
-}
-
-/* The list is rendered twice, so travelling exactly -50% lands copy two where
-   copy one began — the seam never shows. */
-/* Spacing lives on the items, not as flex `gap`. With `gap` the track measures
-   20 slots + 19 gaps, so -50% stops half a gap short of a whole copy and the
-   loop jumps every cycle. A trailing margin on every slot makes half the track
-   exactly one copy wide. */
-.sl-track {
+/* The original strip: a fixed row of slots that cross-fade one at a time, not a
+   marquee. The swap logic lives in useLogoSwapper. */
+.sl-logos-inner {
   display: flex;
   align-items: center;
-  width: max-content;
-  /* 58s across ~1800px is about 31px a second — slow enough that the strip read
-     as static. 44s still drifts rather than scrolls. */
-  animation: slmarquee 39s linear infinite;
-  will-change: transform;
+  justify-content: space-between;
+  gap: clamp(20px, 4vw, 60px);
+  max-width: 1500px;
+  margin: 0 auto;
 }
-@keyframes slmarquee {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-50%, 0, 0); }
-}
-
-/* Holds still so a name you recognise can be read, and so the per-logo hover
-   below has something stationary to land on. */
-/* Deliberately NOT paused on hover: the strip should keep drifting whatever the
-   cursor does. Individual logos still brighten as you pass them. */
 
 .sl-logo-slot {
-  flex: 0 0 auto;
-  width: clamp(84px, 10vw, 136px);
-  height: clamp(34px, 5.4vh, 52px);
-  margin-right: clamp(19px, 3.6vw, 54px);
+  flex: 0 1 auto;
+  width: clamp(76px, 11%, 132px);
+  height: clamp(32px, 5vh, 46px);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-/* .62 left them washed into the background — client names are evidence, not
-   wallpaper. Each one comes up to full weight under the cursor. */
+
+/* State is a class, not an inline opacity, so the hover below can still win —
+   an inline style would outrank it. */
 .sl-logo {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: .8;
-  transition: opacity .35s ease;
+  opacity: .62;
+  transition: opacity .55s ease;
 }
-.sl-logo-slot:hover .sl-logo { opacity: 1; }
+.sl-logo.is-out { opacity: 0; }
+.sl-logo-slot:hover .sl-logo:not(.is-out) { opacity: 1; }
 
 /* ── Footer ────────────────────────────────────────────────────────────────── */
 
@@ -996,6 +972,11 @@ html.sl-pointer-invert.sl-pointer-link .sl-cursor-ring > i { border-color: rgba(
   .sl-footer { padding: 16px 24px; }
   .sl-logos { padding: 14px 24px 6px; }
 
+  /* Seven slots at their 76px floor need ~700px. Showing five keeps the row
+     spaced rather than crushed; the swapper still cycles the full brand list
+     through the slots that remain. */
+  .sl-logo-slot:nth-child(n+6) { display: none; }
+
   .sl-nav { gap: 22px; }
   .sl-nav a { font-size: 14px; }
 
@@ -1018,6 +999,9 @@ html.sl-pointer-invert.sl-pointer-link .sl-cursor-ring > i { border-color: rgba(
   .sl-header { padding: 15px 20px; }
   .sl-footer { padding: 14px 20px; font-size: 13px; }
   .sl-logos { padding: 12px 20px 6px; }
+
+  /* 3 × 76px + 2 × 20px gap = 268px, inside the 280px a 320px phone leaves. */
+  .sl-logo-slot:nth-child(n+4) { display: none; }
   .sl-main { padding: 30px 20px 40px; }
 
   /* Brand and four nav items have to share 375px. */

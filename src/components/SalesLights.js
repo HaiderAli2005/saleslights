@@ -11,6 +11,7 @@ import {
   TABS,
 } from './data';
 import SplitHeadline from './SplitHeadline';
+import useLogoSwapper from './useLogoSwapper';
 
 const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
@@ -55,6 +56,8 @@ export default function SalesLights() {
   const [revealHeadline, setRevealHeadline] = useState(true);
   const [portraitReady, setPortraitReady] = useState(false);
   const [playHeadline, setPlayHeadline] = useState(false);
+
+  const slots = useLogoSwapper();
 
   const mainRef = useRef(null);
   const homeH1Ref = useRef(null);
@@ -609,27 +612,25 @@ export default function SalesLights() {
       </main>
 
       <div className="sl-logos">
-        <div className="sl-marquee">
-          <div className="sl-track">
-            {[0, 1].map((copy) =>
-              BRANDS.map((b) => (
-                <div key={`${copy}-${b.id}`} className="sl-logo-slot">
-                  <div
-                    role={copy === 0 ? 'img' : undefined}
-                    aria-label={copy === 0 ? b.alt : undefined}
-                    aria-hidden={copy === 1 ? 'true' : undefined}
-                    title={b.alt}
-                    className="sl-logo"
-                    style={{
-                      width: b.w,
-                      height: b.h,
-                      backgroundImage: `url("/brand/${b.id}.png")`,
-                    }}
-                  />
-                </div>
-              ))
-            )}
-          </div>
+        <div className="sl-logos-inner">
+          {slots.map((sl, i) => {
+            const b = BRANDS[sl.idx];
+            return (
+              <div key={i} className="sl-logo-slot">
+                <div
+                  role="img"
+                  aria-label={b.alt}
+                  title={b.alt}
+                  className={`sl-logo${sl.visible ? '' : ' is-out'}`}
+                  style={{
+                    width: b.w,
+                    height: b.h,
+                    backgroundImage: `url("/brand/${b.id}.png")`,
+                  }}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
 

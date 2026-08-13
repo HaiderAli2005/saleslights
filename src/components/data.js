@@ -1,5 +1,9 @@
 export const PAGES = ['home', 'services', 'studio', 'contact'];
 
+// Slots in the client strip. Fewer than BRANDS, which is what leaves a pool for
+// the swapper to draw from.
+export const SLOT_COUNT = 7;
+
 export const TABS = [
   { label: 'Home', key: 'home' },
   { label: 'Services', key: 'services' },
