@@ -598,13 +598,16 @@ html.sl-pointer-link .sl-cursor-ring > i {
   from { transform: translate3d(0, 101%, 0); }
   to { transform: translate3d(0, 0, 0); }
 }
-/* Overscanned so the parallax drift never exposes an edge inside the frame. */
+/* Overscanned so the parallax drift never exposes an edge inside the frame.
+   The drift is ±8px, which on the narrowest frame that ever runs it (190px)
+   needs ~4.2%. 7% was nearly double what the effect requires, and every extra
+   percent is just crop taken off the photograph. */
 .sl-portrait {
   position: absolute;
-  left: -7%;
-  top: -7%;
-  width: 114%;
-  height: 114%;
+  left: -5%;
+  top: -5%;
+  width: 110%;
+  height: 110%;
   object-fit: cover;
   object-position: 50% 20%;
   display: block;
@@ -999,10 +1002,13 @@ html.sl-pointer-invert.sl-pointer-link .sl-cursor-ring > i { border-color: rgba(
   /* 14ch is a measure chosen for 72px type; at 32px it makes a thin column. */
   .sl-h1 { max-width: 20ch; }
 
-  /* Portrait plus caption needs ~500px side by side. */
-  .sl-portrait-row { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .sl-portrait-frame { width: min(62%, 240px); }
-  .sl-person { flex: 0 0 auto; width: 100%; }
+  /* Stays side by side rather than stacking: stacking left a tall empty block
+     beside the photograph. Holding the portrait at roughly the same share of
+     the column it takes on desktop (~45%) leaves enough width for the name to
+     stay on one line — at 320px that is 134px of photo and 133px of caption. */
+  .sl-portrait-row { gap: clamp(14px, 4vw, 24px); }
+  .sl-portrait-frame { width: min(48%, 200px); }
+  .sl-person { flex: 1 1 auto; min-width: 0; }
 
   /* Reserving the tallest service body costs half a phone screen of blank. */
   .sl-service-body { min-height: 0; }
@@ -1030,4 +1036,8 @@ html.sl-pointer-invert.sl-pointer-link .sl-cursor-ring > i { border-color: rgba(
   html[data-cursor='on'] a,
   html[data-cursor='on'] button { cursor: auto; }
   .sl-bg-glow { left: 50%; top: 42%; }
+
+  /* The parallax never starts without a pointer, so the overscan buys nothing
+     here — it only zooms into the portrait and crops the shoulders away. */
+  .sl-portrait { left: 0; top: 0; width: 100%; height: 100%; }
 }
